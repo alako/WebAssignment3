@@ -58,7 +58,11 @@ namespace WebAssignment3
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<ModelUser,ModelRole>()
+            services.AddIdentity<ModelUser,ModelRole>(opt =>
+            {
+                opt.Password.RequireNonAlphanumeric = false;
+                opt.Password.RequireUppercase = false;
+            })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders()
                 .AddDefaultUI();
