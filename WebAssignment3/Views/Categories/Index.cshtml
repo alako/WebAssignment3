@@ -1,0 +1,52 @@
+﻿@model IEnumerable<WebAssignment3.Models.Category>
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+@if ((await AuthorizationService.AuthorizeAsync(User, "AdminPolicy")).Succeeded)
+{
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+}
+
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            @if ((await AuthorizationService.AuthorizeAsync(User, "AdminPolicy")).Succeeded)
+            {
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.CategoryId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.CategoryId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.CategoryId">Delete</a>
+                </td>
+            }
+            else
+            {
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.CategoryId">Details</a> 
+                </td>
+            }
+        </tr>
+        }
+    </tbody>
+</table>

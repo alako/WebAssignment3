@@ -1,0 +1,49 @@
+﻿@model WebAssignment3.Models.ESImage
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>ESImage</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ImageMimeType)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ImageMimeType)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Thumbnail)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Thumbnail)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ImageData)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ImageData)
+        </dd>
+    </dl>
+</div>
+@if ((await AuthorizationService.AuthorizeAsync(User, "AdminPolicy")).Succeeded)
+{
+    <div>
+
+        <a asp-action="Edit" asp-route-id="@Model.ESImageId">Edit</a> |
+        <a asp-action="Index">Back to List</a>
+
+    </div>
+}
+else
+{
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
+}
