@@ -10,7 +10,7 @@ namespace WebAssignment3.ViewModels
     {
         public ComponentTypeViewModel() {
            SelectedCategories = new List<string>();
-           SelectedComponents = new List<string>();
+            SelectedComponents = new List<string>();
         }
 
         public long ComponentTypeId { get; set; }

@@ -161,20 +161,13 @@ namespace WebAssignment3.Controllers
                 {
                     ComponentType componentType = _context.ComponentType.Find(long.Parse(sid));
 
-                   // var isPresent = category.ComponentTypeCategories.FirstOrDefault(s => s.ComponentType == componentType);
-
-                   // if (isPresent == null)
-                   // {
                     var tempCtc = new ComponentTypeCategory
                     {
                         Category = category,
                         ComponentType = componentType
                     };
 
-                    ComponentTypeCategory ctc = _context.Add(tempCtc).Entity;
-
-                    category.ComponentTypeCategories.Add(ctc);
-                    //  }
+                    _context.Add(tempCtc);
                 }
 
                 try

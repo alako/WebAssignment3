@@ -13,6 +13,7 @@ using WebAssignment3.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WebAssignment3.Models;
+using AutoMapper;
 
 namespace WebAssignment3
 {
@@ -82,6 +83,7 @@ namespace WebAssignment3
             });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddAutoMapper(); // Adding automapper
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

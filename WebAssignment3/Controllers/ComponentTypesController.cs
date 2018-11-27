@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -16,10 +17,12 @@ namespace WebAssignment3.Controllers
     public class ComponentTypesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public ComponentTypesController(ApplicationDbContext context)
+        public ComponentTypesController(ApplicationDbContext context, IMapper mapper )
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: ComponentType
@@ -93,7 +96,7 @@ namespace WebAssignment3.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("SelectedCategories, SelectedComponets, ComponentName,ComponentInfo,Location,Status,Datasheet,ImageUrl,Manufacturer,WikiLink,AdminComment")] ComponentTypeViewModel vm)
+        public async Task<IActionResult> Create([Bind("SelectedCategories, SelectedComponents, ComponentName,ComponentInfo,Location,Status,Datasheet,ImageUrl,Manufacturer,WikiLink,AdminComment")] ComponentTypeViewModel vm)
         {
             if (ModelState.IsValid)
             {
@@ -172,6 +175,13 @@ namespace WebAssignment3.Controllers
                 Value = c.CategoryId.ToString()
             }).ToListAsync();
 
+            var componentsAsSelectList = await _context.Component.Select(c => new SelectListItem
+            {
+                Text = c.ComponentId.ToString(),
+                Value = c.ComponentId.ToString()
+            }).ToListAsync();
+
+            /*
             ComponentTypeViewModel vm = new ComponentTypeViewModel
             {
                 ComponentName = componentType.ComponentName,
@@ -185,10 +195,15 @@ namespace WebAssignment3.Controllers
                 ImageUrl = componentType.ImageUrl,
                 Image = componentType.Image,
                 MultiSelectCategories = new MultiSelectList(categoriesAsSelectList.OrderBy(c => c.Text), "Value", "Text"),
+                MultiSelectListComponents = new MultiSelectList(componentsAsSelectList.OrderBy(c => c.Text), "Value", "Text"),
                 ComponentTypeId = componentType.ComponentTypeId,
-            };
+            };  */
 
+            ComponentTypeViewModel vm = _mapper.Map<ComponentTypeViewModel>(componentType);
 
+            vm.MultiSelectCategories = new MultiSelectList(categoriesAsSelectList.OrderBy(c => c.Text), "Value", "Text");
+            vm.MultiSelectListComponents = new MultiSelectList(componentsAsSelectList.OrderBy(c => c.Text), "Value", "Text");
+            
             return View(vm);
         }
 
@@ -197,9 +212,9 @@ namespace WebAssignment3.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("ComponentTypeId,ComponentName,ComponentInfo,Location,Status,Datasheet,ImageUrl,Manufacturer,WikiLink,AdminComment")] ComponentType componentType)
+        public async Task<IActionResult> Edit(long id, [Bind("SelectedComponents, SelectedCategories ,ComponentTypeId,ComponentName,ComponentInfo,Location,Status,Datasheet,ImageUrl,Manufacturer,WikiLink,AdminComment")] ComponentTypeViewModel vm)
         {
-            if (id != componentType.ComponentTypeId)
+            if (id != vm.ComponentTypeId)
             {
                 return NotFound();
             }
@@ -208,12 +223,42 @@ namespace WebAssignment3.Controllers
             {
                 try
                 {
-                    _context.Update(componentType);
+                    var componentType = _context.ComponentType.Find(id);
+
+                    var temp = _mapper.Map<ComponentType>(vm);
+                    
+                    foreach(var selectedComponentId in vm.SelectedComponents)
+                    {
+                        var component = _context.Component.FirstOrDefault(c => c.ComponentId == long.Parse(selectedComponentId));
+                        if(component != null)
+                        {
+                            componentType.Components.Add(component);
+                        }
+                    }
+
+                    _context.ComponentTypeCategory.RemoveRange(componentType.ComponentTypeCategories);
+
+                    foreach(var selectedCategoryId in vm.SelectedCategories)
+                    {
+                        var cat = _context.Category.Find(long.Parse(selectedCategoryId));
+
+                        if (cat != null)
+                        {
+                            ComponentTypeCategory ctc = new ComponentTypeCategory
+                            {
+                                Category = cat,
+                                ComponentType = componentType,
+                            };
+                            // todo make add or update
+                            _context.Add(ctc);
+                        }
+                    }
+
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ComponentTypeExists(componentType.ComponentTypeId))
+                    if (!ComponentTypeExists(id))
                     {
                         return NotFound();
                     }
@@ -224,7 +269,7 @@ namespace WebAssignment3.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(componentType);
+            return View(vm);
         }
 
         // GET: ComponentType/Delete/5
