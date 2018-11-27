@@ -155,23 +155,26 @@ namespace WebAssignment3.Controllers
 
                 category.Name = vm.Name;
 
+                _context.ComponentTypeCategory.RemoveRange(category.ComponentTypeCategories);
+
                 foreach (var sid in vm.SelectedComponentTypes)
                 {
                     ComponentType componentType = _context.ComponentType.Find(long.Parse(sid));
 
-                    var isPresent = category.ComponentTypeCategories.Single(ctc => ctc.ComponentType == componentType);
+                   // var isPresent = category.ComponentTypeCategories.FirstOrDefault(s => s.ComponentType == componentType);
 
-                    if (isPresent == null)
+                   // if (isPresent == null)
+                   // {
+                    var tempCtc = new ComponentTypeCategory
                     {
-                        var tempCtc = new ComponentTypeCategory
-                        {
-                            Category = category,
-                            ComponentType = componentType
-                        };
-                        ComponentTypeCategory ctc = _context.Add(tempCtc).Entity;
+                        Category = category,
+                        ComponentType = componentType
+                    };
 
-                        category.ComponentTypeCategories.Add(ctc);
-                    }
+                    ComponentTypeCategory ctc = _context.Add(tempCtc).Entity;
+
+                    category.ComponentTypeCategories.Add(ctc);
+                    //  }
                 }
 
                 try

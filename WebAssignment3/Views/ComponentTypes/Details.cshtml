@@ -1,4 +1,4 @@
-﻿@model WebAssignment3.Models.ComponentType
+﻿@model WebAssignment3.ViewModels.ComponentTypeViewModel
 @using Microsoft.AspNetCore.Authorization
 @inject IAuthorizationService AuthorizationService
 
@@ -65,6 +65,31 @@
         </dt>
         <dd>
             @Html.DisplayFor(model => model.AdminComment)
+        </dd>
+
+        <dt>
+            @Html.DisplayName("Categories")
+        </dt>
+        <dd>
+            @foreach(var category in Model.Categories)
+            {
+                <p>
+                    @Html.DisplayFor(model => category.Name)
+                </p>
+            }
+        </dd>
+
+        <dt>
+            @Html.DisplayName("Components")
+        </dt>
+
+        <dd>
+            @foreach(var component in Model.Components)
+            {
+                <p>
+                    @Html.DisplayFor(model => component.ComponentTypeId)
+                </p>
+            }
         </dd>
     </dl>
 </div>

@@ -60,7 +60,12 @@
 
             <div class="form-group">
                 <label asp-for="MultiSelectCategories" class="control-label"></label>
-                @Html.ListBoxFor(m => Model.SelectedCategories, Model.MultiSelectCategories, new { @class = "form-control" })
+                @Html.ListBoxFor(m => m.SelectedCategories, Model.MultiSelectCategories, new { @class = "form-control" })
+            </div>
+
+            <div class="form-group">
+                <label asp-for="MultiSelectListComponents" class="control-label"></label>
+                @Html.ListBoxFor(m => m.SelectedComponents, Model.MultiSelectListComponents, new { @class = "form-control" })
             </div>
 
             <div class="form-group">

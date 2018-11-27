@@ -9,7 +9,8 @@ namespace WebAssignment3.ViewModels
     public class ComponentTypeViewModel
     {
         public ComponentTypeViewModel() {
-            SelectedCategories = new List<string>();
+           SelectedCategories = new List<string>();
+           SelectedComponents = new List<string>();
         }
 
         public long ComponentTypeId { get; set; }
@@ -38,17 +39,17 @@ namespace WebAssignment3.ViewModels
         public virtual ESImage Image { get; set; }
 
 
-
+        [Display(Name = "Categories")]
         public MultiSelectList MultiSelectCategories { get; set; }
 
-        public List<string> SelectedCategories { get; set; }
+        public IEnumerable<string> SelectedCategories { get; set; }
 
         public List<Category> Categories { get; set; }
 
-
+        [Display(Name = "Components")]
         public MultiSelectList MultiSelectListComponents { get; set; }
 
-        public List<string> SelectedComponents { get; set; }
+        public IEnumerable<string> SelectedComponents { get; set; }
 
         public List<Component> Components { get; set; }
     }

@@ -45,22 +45,45 @@ namespace WebAssignment3.Controllers
                 return NotFound();
             }
 
-            return View(componentType);
+            ComponentTypeViewModel vm = new ComponentTypeViewModel
+            {
+                ComponentName = componentType.ComponentName,
+                AdminComment = componentType.AdminComment,
+                ComponentInfo = componentType.ComponentInfo,
+                Datasheet = componentType.Datasheet,
+                ImageUrl = componentType.ImageUrl,
+                WikiLink = componentType.WikiLink,
+                Status = componentType.Status,
+                Manufacturer = componentType.Manufacturer,
+                Image = componentType.Image,
+                ComponentTypeId = componentType.ComponentTypeId,
+
+                Categories = _context.ComponentTypeCategory.Where(ctc => ctc.ComponentTypeId == componentType.ComponentTypeId).Select(cat => cat.Category).ToList(),
+                Components = componentType.Components.ToList()
+            };
+
+            return View(vm);
         }
 
         // GET: ComponentType/Create
         public async Task<IActionResult> Create()
         {
-
             var categoriesAsSelectList = await _context.Category.Select(c => new SelectListItem
             {
-                Text = c.Name,
+                Text = c.Name.ToString(),
                 Value = c.CategoryId.ToString()
+            }).ToListAsync();
+
+            var componentsAsSelectList = await _context.Component.Select(c => new SelectListItem
+            {
+                Text = c.ComponentId.ToString(),
+                Value = c.ComponentId.ToString()
             }).ToListAsync();
 
             ComponentTypeViewModel vm = new ComponentTypeViewModel
             {
                 MultiSelectCategories = new MultiSelectList(categoriesAsSelectList.OrderBy(c => c.Text), "Value", "Text"),
+                MultiSelectListComponents = new MultiSelectList(componentsAsSelectList.OrderBy(c => c.Text), "Value", "Text"),
             };
             return View(vm);
         }
@@ -70,7 +93,7 @@ namespace WebAssignment3.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("SelectedCategories, ComponentName,ComponentInfo,Location,Status,Datasheet,ImageUrl,Manufacturer,WikiLink,AdminComment")] ComponentTypeViewModel vm)
+        public async Task<IActionResult> Create([Bind("SelectedCategories, SelectedComponets, ComponentName,ComponentInfo,Location,Status,Datasheet,ImageUrl,Manufacturer,WikiLink,AdminComment")] ComponentTypeViewModel vm)
         {
             if (ModelState.IsValid)
             {
@@ -92,9 +115,9 @@ namespace WebAssignment3.Controllers
                 {
                     var componentType = _context.Add(tempComponentType).Entity;
 
-                    foreach (var id in vm.SelectedCategories)
+                    foreach (var sid in vm.SelectedCategories)
                     {
-                        Category cat = _context.Category.Find(long.Parse(id));
+                        Category cat = _context.Category.Find(long.Parse(sid));
 
                         if (cat != null)
                         {
@@ -106,6 +129,17 @@ namespace WebAssignment3.Controllers
                             _context.Add(ctc);
                         }
                     }
+
+                    foreach(var scid in vm.SelectedComponents)
+                    {
+                        Component component = _context.Component.Find(long.Parse(scid));
+
+                        if (component != null && !componentType.Components.Contains(component))
+                        {
+                            componentType.Components.Add(component);
+                        }
+                    }
+
                     await _context.SaveChangesAsync();
                 }
                 catch (Exception ex)

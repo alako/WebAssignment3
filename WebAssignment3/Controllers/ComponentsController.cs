@@ -21,7 +21,6 @@ namespace WebAssignment3.Controllers
             _context = context;
         }
 
-
         // GET: Component
         [AllowAnonymous]
         public async Task<IActionResult> Index()
@@ -44,6 +43,8 @@ namespace WebAssignment3.Controllers
             {
                 return NotFound();
             }
+
+
 
             return View(component);
         }
