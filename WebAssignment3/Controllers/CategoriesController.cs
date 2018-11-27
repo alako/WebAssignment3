@@ -134,7 +134,6 @@ namespace WebAssignment3.Controllers
             CategoryViewModel vm = new CategoryViewModel
             {
                 Name = category.Name,
-                CategoryId = category.CategoryId.ToString(),
                 ComponentTypes = new MultiSelectList(componentTypesAsSelectList.OrderBy(ct => ct.Text), "Value", "Text")
             };
             return View(vm);
@@ -145,13 +144,8 @@ namespace WebAssignment3.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Name, SelectedComponentTypes, CategoryId")] CategoryViewModel vm)
+        public async Task<IActionResult> Edit(long id, [Bind("Name, SelectedComponentTypes")] CategoryViewModel vm)
         {
-            if (id != long.Parse(vm.CategoryId))
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 // Find category including the linked ComponentTypeCategories

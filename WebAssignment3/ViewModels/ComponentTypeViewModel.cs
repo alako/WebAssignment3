@@ -37,12 +37,20 @@ namespace WebAssignment3.ViewModels
 
         public virtual ESImage Image { get; set; }
 
+
+
         public MultiSelectList MultiSelectCategories { get; set; }
 
         public List<string> SelectedCategories { get; set; }
 
         public List<Category> Categories { get; set; }
 
+
+        public MultiSelectList MultiSelectListComponents { get; set; }
+
+        public List<string> SelectedComponents { get; set; }
+
+        public List<Component> Components { get; set; }
     }
 
 }
