@@ -1,7 +1,97 @@
-﻿@{
+﻿@model WebAssignment3.ViewModels.HomeViewModel
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <h1>Welcome to the new Embedded stocks shop!</h1>
 
 <p>From here you can add, create, update and delete different component models.</p>
+
+@using (Html.BeginForm())
+{
+    <div>
+        @Html.DisplayNameFor(m => m.CategoriesSelect)
+        <select class="form-control" asp-for="SelectedCategoryId" asp-items="Model.CategoriesSelect"></select>
+
+        @Html.DisplayNameFor(m => m.ComponentTypesSelect)
+        <select class="form-control" asp-for="SelectedComponentTypeId" asp-items="Model.ComponentTypesSelect"></select>
+
+        <input type="submit" value="Search" class="btn" />
+    </div>
+
+    @if (Model.ComponentTypes.Count > 0)
+    {
+        <h2>Component Types from category</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ComponentTypes[0].ComponentName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ComponentTypes[0].ComponentInfo)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ComponentTypes[0].Location)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ComponentTypes[0].Status)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ComponentTypes[0].Datasheet)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ComponentTypes[0].ImageUrl)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ComponentTypes[0].Manufacturer)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ComponentTypes[0].WikiLink)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ComponentTypes[0].AdminComment)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.ComponentTypes)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ComponentName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ComponentInfo)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Location)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Status)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Datasheet)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ImageUrl)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Manufacturer)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.WikiLink)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AdminComment)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+}
+
