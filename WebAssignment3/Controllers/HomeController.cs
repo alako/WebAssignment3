@@ -49,9 +49,9 @@ namespace WebAssignment3.Controllers
 
             if (vm.SelectedComponentTypeId != 0)
             {
-                var componentTypeFromDb = _context.ComponentType.Find(vm.SelectedComponentTypeId);
+                var componentsFromDb = _context.Component.Where(c => c.ComponentTypeId == vm.SelectedComponentTypeId);
 
-                foreach(var component in componentTypeFromDb.Components)
+                foreach(var component in componentsFromDb)
                 {
                     vm.Components.Add(_mapper.Map<ComponentViewModel>(component));
                 }

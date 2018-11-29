@@ -47,23 +47,10 @@ namespace WebAssignment3.Controllers
                 return NotFound();
             }
 
-            ComponentTypeViewModel vm = new ComponentTypeViewModel
-            {
-                ComponentName = componentType.ComponentName,
-                AdminComment = componentType.AdminComment,
-                ComponentInfo = componentType.ComponentInfo,
-                Datasheet = componentType.Datasheet,
-                ImageUrl = componentType.ImageUrl,
-                WikiLink = componentType.WikiLink,
-                Status = componentType.Status,
-                Manufacturer = componentType.Manufacturer,
-                Image = componentType.Image,
-                ComponentTypeId = componentType.ComponentTypeId,
-
-                Categories = _context.ComponentTypeCategory.Where(ctc => ctc.ComponentTypeId == componentType.ComponentTypeId).Select(cat => cat.Category).ToList(),
-                Components = componentType.Components.ToList()
-            };
-
+            ComponentTypeViewModel vm = _mapper.Map<ComponentTypeViewModel>(componentType);
+            vm.Categories = _context.ComponentTypeCategory.Where(ctc => ctc.ComponentTypeId == componentType.ComponentTypeId).Select(cat => cat.Category).ToList();
+            vm.Components = _context.Component.Where(c => c.ComponentTypeId == componentType.ComponentTypeId).ToList();
+            
             return View(vm);
         }
 
