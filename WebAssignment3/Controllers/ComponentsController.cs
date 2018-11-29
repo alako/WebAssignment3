@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebAssignment3.Data;
 using WebAssignment3.Models;
+using WebAssignment3.ViewModels;
 
 namespace WebAssignment3.Controllers
 {
@@ -15,17 +17,20 @@ namespace WebAssignment3.Controllers
     public class ComponentsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public ComponentsController(ApplicationDbContext context)
+        public ComponentsController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: Component
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Component.ToListAsync());
+            IList<ComponentViewModel> vm = _mapper.Map<IList<ComponentViewModel>>(await _context.Component.ToListAsync());
+            return View(vm);
         }
 
         // GET: Component/Details/5
@@ -39,14 +44,16 @@ namespace WebAssignment3.Controllers
 
             var component = await _context.Component
                 .FirstOrDefaultAsync(m => m.ComponentId == id);
+
             if (component == null)
             {
                 return NotFound();
             }
 
+            ComponentViewModel vm = _mapper.Map<ComponentViewModel>(component);
 
 
-            return View(component);
+            return View(vm);
         }
 
         // GET: Component/Create
