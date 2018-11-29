@@ -20,6 +20,9 @@ namespace WebAssignment3.Infrastructure
                 .ForMember(c => c.SelectedCategories, opt => opt.Ignore())
                 .ForMember(c => c.SelectedComponents, opt => opt.Ignore())
                 .ReverseMap();
+
+            CreateMap<Component, ComponentViewModel>()
+                .ReverseMap();
         }
     }
 }
