@@ -52,15 +52,18 @@ namespace WebAssignment3.Controllers
 
             ComponentViewModel vm = _mapper.Map<ComponentViewModel>(component);
 
-
             return View(vm);
         }
 
         // GET: Component/Create
         public IActionResult Create()
         {
-            ViewBag.ComponentTypeId = new SelectList(_context.ComponentType.ToList(), "ComponentTypeId", "ComponentName");
-            return View();
+            ComponentViewModel vm = new ComponentViewModel
+            {
+                ComponentTypeIdsSelect = new SelectList(_context.ComponentType.ToList(), "ComponentTypeId", "ComponentName"),
+            };
+
+            return View(vm);
         }
 
         // POST: Component/Create
@@ -68,32 +71,38 @@ namespace WebAssignment3.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ComponentId,ComponentTypeId,ComponentNumber,SerialNo,Status,AdminComment,UserComment,CurrentLoanInformationId")] Component component)
+        public async Task<IActionResult> Create([Bind("ComponentId,ComponentTypeId,ComponentNumber,SerialNo,Status,AdminComment,UserComment,CurrentLoanInformationId")] ComponentViewModel vm)
         {
+            Component temp = _mapper.Map<Component>(vm);
+
             if (ModelState.IsValid)
             {
-                _context.Add(component);
+                _context.Add(temp);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(component);
+            return View(vm);
         }
 
         // GET: Component/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            ViewBag.ComponentTypeId = new SelectList(_context.ComponentType.ToList(), "ComponentTypeId", "ComponentName");
             if (id == null)
             {
                 return NotFound();
             }
 
             var component = await _context.Component.FindAsync(id);
+
             if (component == null)
             {
                 return NotFound();
             }
-            return View(component);
+
+            ComponentViewModel vm = _mapper.Map<ComponentViewModel>(component);
+            vm.ComponentTypeIdsSelect = new SelectList(_context.ComponentType.ToList(), "ComponentTypeId", "ComponentName");
+
+            return View(vm);
         }
 
         // POST: Component/Edit/5
@@ -101,15 +110,17 @@ namespace WebAssignment3.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("ComponentId,ComponentTypeId,ComponentNumber,SerialNo,Status,AdminComment,UserComment,CurrentLoanInformationId")] Component component)
+        public async Task<IActionResult> Edit(long id, [Bind("ComponentId,ComponentTypeId,ComponentNumber,SerialNo,Status,AdminComment,UserComment,CurrentLoanInformationId")] ComponentViewModel vm)
         {
-            if (id != component.ComponentId)
+            if (id != vm.ComponentId)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
+                Component component = _mapper.Map<Component>(vm);
+
                 try
                 {
                     _context.Update(component);
@@ -128,7 +139,7 @@ namespace WebAssignment3.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(component);
+            return View(vm);
         }
 
         // GET: Component/Delete/5

@@ -22,6 +22,7 @@ namespace WebAssignment3.Infrastructure
                 .ReverseMap();
 
             CreateMap<Component, ComponentViewModel>()
+                .ForMember(c => c.ComponentTypeIdsSelect, opt => opt.Ignore())
                 .ReverseMap();
         }
     }

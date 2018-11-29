@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -30,5 +31,7 @@ namespace WebAssignment3.ViewModels
         public string UserComment { get; set; }
 
         public long? CurrentLoanInformationId { get; set; }
+
+        public SelectList ComponentTypeIdsSelect { get; set; }
     }
 }

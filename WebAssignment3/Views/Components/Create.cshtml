@@ -1,4 +1,4 @@
-﻿@model WebAssignment3.Models.Component
+﻿@model WebAssignment3.ViewModels.ComponentViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -14,7 +14,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="ComponentTypeId" class="control-label"></label>
-                <select asp-for="ComponentTypeId" class="form-control" asp-items="@ViewBag.ComponentTypeId"></select>
+                <select asp-for="ComponentTypeId" class="form-control" asp-items="Model.ComponentTypeIdsSelect"></select>
             </div>
             <div class="form-group">
                 <label asp-for="ComponentNumber" class="control-label"></label>
