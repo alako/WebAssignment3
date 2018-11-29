@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -181,24 +180,6 @@ namespace WebAssignment3.Controllers
                 Value = c.ComponentId.ToString()
             }).ToListAsync();
 
-            /*
-            ComponentTypeViewModel vm = new ComponentTypeViewModel
-            {
-                ComponentName = componentType.ComponentName,
-                AdminComment = componentType.AdminComment,
-                ComponentInfo = componentType.ComponentInfo,
-                Datasheet = componentType.Datasheet,
-                Location = componentType.Location,
-                WikiLink = componentType.WikiLink,
-                Status = componentType.Status,
-                Manufacturer = componentType.Manufacturer,
-                ImageUrl = componentType.ImageUrl,
-                Image = componentType.Image,
-                MultiSelectCategories = new MultiSelectList(categoriesAsSelectList.OrderBy(c => c.Text), "Value", "Text"),
-                MultiSelectListComponents = new MultiSelectList(componentsAsSelectList.OrderBy(c => c.Text), "Value", "Text"),
-                ComponentTypeId = componentType.ComponentTypeId,
-            };  */
-
             ComponentTypeViewModel vm = _mapper.Map<ComponentTypeViewModel>(componentType);
 
             vm.MultiSelectCategories = new MultiSelectList(categoriesAsSelectList.OrderBy(c => c.Text), "Value", "Text");
@@ -223,9 +204,7 @@ namespace WebAssignment3.Controllers
             {
                 try
                 {
-                    // var componentType = _context.ComponentType.Find(id);
-
-                    var temp = _mapper.Map<ComponentType>(vm);
+                    ComponentType temp = _mapper.Map<ComponentType>(vm);
                     temp.ComponentTypeCategories = _context.ComponentTypeCategory.Where(c => c.ComponentType == temp).ToList();
                     
                     foreach(var selectedComponentId in vm.SelectedComponents)
@@ -250,7 +229,6 @@ namespace WebAssignment3.Controllers
                                 Category = cat,
                                 ComponentType = temp,
                             };
-                            // todo make add or update
                             _context.Add(ctc);
                         }
                     }
