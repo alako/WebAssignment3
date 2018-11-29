@@ -13,7 +13,7 @@ namespace WebAssignment3.ViewModels
         public HomeViewModel()
         {
             ComponentTypes = new List<ComponentTypeViewModel>();
-            Components = new List<Component>();
+            Components = new List<ComponentViewModel>();
         }
 
         [Display(Name = "Categories")]
@@ -30,6 +30,6 @@ namespace WebAssignment3.ViewModels
         public List<ComponentTypeViewModel> ComponentTypes { get; set; }
 
         [Display(Name = "Components")]
-        public List<Component> Components { get; set; }
+        public List<ComponentViewModel> Components { get; set; }
     }
 }

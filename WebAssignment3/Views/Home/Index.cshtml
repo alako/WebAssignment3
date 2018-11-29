@@ -12,10 +12,18 @@
 {
     <div>
         @Html.DisplayNameFor(m => m.CategoriesSelect)
-        <select class="form-control" asp-for="SelectedCategoryId" asp-items="Model.CategoriesSelect"></select>
+        <select class="form-control" asp-for="SelectedCategoryId" asp-items="Model.CategoriesSelect">
+            <option value="">
+                None
+            </option>
+        </select>
 
         @Html.DisplayNameFor(m => m.ComponentTypesSelect)
-        <select class="form-control" asp-for="SelectedComponentTypeId" asp-items="Model.ComponentTypesSelect"></select>
+        <select class="form-control" asp-for="SelectedComponentTypeId" asp-items="Model.ComponentTypesSelect">
+            <option value="">
+                None
+            </option>
+        </select>
 
         <input type="submit" value="Search" class="btn" />
     </div>
@@ -86,6 +94,61 @@
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.AdminComment)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    @if (Model.Components.Count > 0)
+    {
+        <h2>Components from Compontent Type</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Components[0].ComponentNumber)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Components[0].SerialNo)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Components[0].Status)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Components[0].AdminComment)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Components[0].UserComment)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Components[0].CurrentLoanInformationId)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Components)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ComponentNumber)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SerialNo)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Status)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AdminComment)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UserComment)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CurrentLoanInformationId)
                         </td>
                     </tr>
                 }

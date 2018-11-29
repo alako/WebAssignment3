@@ -36,16 +36,30 @@ namespace WebAssignment3.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(HomeViewModel vm)
         {
-            var componentTypeCatsFromDb = _context.ComponentTypeCategory.Where(ctc => ctc.CategoryId == vm.SelectedCategoryId).ToList();
-
-            foreach (var ctc in componentTypeCatsFromDb)
+            if (vm.SelectedCategoryId != 0)
             {
-                var tempComponentType = _mapper.Map<ComponentTypeViewModel>(_context.ComponentType.Find(ctc.ComponentTypeId));
-                vm.ComponentTypes.Add(tempComponentType);
+                var componentTypeCatsFromDb = _context.ComponentTypeCategory.Where(ctc => ctc.CategoryId == vm.SelectedCategoryId).ToList();
+
+                foreach (var ctc in componentTypeCatsFromDb)
+                {
+                    var tempComponentType = _mapper.Map<ComponentTypeViewModel>(_context.ComponentType.Find(ctc.ComponentTypeId));
+                    vm.ComponentTypes.Add(tempComponentType);
+                }
+            }
+
+            if (vm.SelectedComponentTypeId != 0)
+            {
+                var componentTypeFromDb = _context.ComponentType.Find(vm.SelectedComponentTypeId);
+
+                foreach(var component in componentTypeFromDb.Components)
+                {
+                    vm.Components.Add(_mapper.Map<ComponentViewModel>(component));
+                }
             }
 
             vm.CategoriesSelect = new SelectList(_context.Category.ToList(), "CategoryId", "Name");
-
+            vm.ComponentTypesSelect= new SelectList(_context.ComponentType.ToList(), "ComponentTypeId", "ComponentName");
+            
             return View(vm);
         }
     }   
