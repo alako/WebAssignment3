@@ -223,20 +223,21 @@ namespace WebAssignment3.Controllers
             {
                 try
                 {
-                    var componentType = _context.ComponentType.Find(id);
+                    // var componentType = _context.ComponentType.Find(id);
 
                     var temp = _mapper.Map<ComponentType>(vm);
+                    temp.ComponentTypeCategories = _context.ComponentTypeCategory.Where(c => c.ComponentType == temp).ToList();
                     
                     foreach(var selectedComponentId in vm.SelectedComponents)
                     {
                         var component = _context.Component.FirstOrDefault(c => c.ComponentId == long.Parse(selectedComponentId));
                         if(component != null)
                         {
-                            componentType.Components.Add(component);
+                            temp.Components.Add(component);
                         }
                     }
 
-                    _context.ComponentTypeCategory.RemoveRange(componentType.ComponentTypeCategories);
+                    _context.ComponentTypeCategory.RemoveRange(temp.ComponentTypeCategories);
 
                     foreach(var selectedCategoryId in vm.SelectedCategories)
                     {
@@ -247,12 +248,14 @@ namespace WebAssignment3.Controllers
                             ComponentTypeCategory ctc = new ComponentTypeCategory
                             {
                                 Category = cat,
-                                ComponentType = componentType,
+                                ComponentType = temp,
                             };
                             // todo make add or update
                             _context.Add(ctc);
                         }
                     }
+
+                    _context.Update(temp);
 
                     await _context.SaveChangesAsync();
                 }

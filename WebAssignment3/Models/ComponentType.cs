@@ -23,7 +23,7 @@ namespace WebAssignment3.Models
         public string AdminComment { get; set; }
         public virtual ESImage Image { get; set; }
         public ICollection<Component> Components { get; protected set; }
-        public ICollection<ComponentTypeCategory> ComponentTypeCategories { get; protected set; }
+        public ICollection<ComponentTypeCategory> ComponentTypeCategories { get; set; }
     }
 
     public enum ComponentTypeStatus
