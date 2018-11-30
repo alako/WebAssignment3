@@ -1,13 +1,10 @@
 ﻿@model WebAssignment3.ViewModels.ComponentTypeViewModel
 @using Microsoft.AspNetCore.Authorization
 @inject IAuthorizationService AuthorizationService
-
 @{
     ViewData["Title"] = "Details";
 }
-
 <h2>Details</h2>
-
 <div>
     <h4>ComponentType</h4>
     <hr />
@@ -66,40 +63,44 @@
         <dd>
             @Html.DisplayFor(model => model.AdminComment)
         </dd>
-
         <dt>
             @Html.DisplayName("Categories")
         </dt>
         <dd>
-            @foreach(var category in Model.Categories)
+            @foreach (var category in Model.Categories)
             {
                 <p>
                     @Html.DisplayFor(model => category.Name)
                 </p>
             }
         </dd>
-
         <dt>
             @Html.DisplayName("Components")
         </dt>
-
         <dd>
-            @foreach(var component in Model.Components)
+            @foreach (var component in Model.Components)
             {
                 <p>
                     @Html.DisplayFor(model => component.ComponentTypeId)
                 </p>
             }
         </dd>
+        @if (Model.FileAsBase64 != null)
+        {
+            <dt>
+                @Html.DisplayNameFor(m => m.File)
+            </dt>
+            <dd>
+                <img src="@Model.FileAsBase64" />
+            </dd>
+        }
     </dl>
 </div>
 @if ((await AuthorizationService.AuthorizeAsync(User, "AdminPolicy")).Succeeded)
 {
     <div>
-
         <a asp-action="Edit" asp-route-id="@Model.ComponentTypeId">Edit</a> |
         <a asp-action="Index">Back to List</a>
-
     </div>
 }
 else

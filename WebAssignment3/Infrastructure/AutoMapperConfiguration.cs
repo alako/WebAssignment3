@@ -14,11 +14,11 @@ namespace WebAssignment3.Infrastructure
         {
             CreateMap<ComponentType, ComponentTypeViewModel>()
                 .ForMember(c => c.Categories, opt => opt.Ignore())
-                .ForMember(c => c.Components, opt => opt.Ignore())
                 .ForMember(c => c.MultiSelectCategories, opt => opt.Ignore())
                 .ForMember(c => c.MultiSelectListComponents, opt => opt.Ignore())
                 .ForMember(c => c.SelectedCategories, opt => opt.Ignore())
                 .ForMember(c => c.SelectedComponents, opt => opt.Ignore())
+                .ForMember(c => c.File, opt => opt.Ignore())
                 .ReverseMap();
 
             CreateMap<Component, ComponentViewModel>()

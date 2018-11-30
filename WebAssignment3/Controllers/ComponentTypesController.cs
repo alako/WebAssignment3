@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebAssignment3.Data;
+using WebAssignment3.Infrastructure;
 using WebAssignment3.Models;
 using WebAssignment3.ViewModels;
 
@@ -17,18 +20,31 @@ namespace WebAssignment3.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IHostingEnvironment _appEnvironment;
 
-        public ComponentTypesController(ApplicationDbContext context, IMapper mapper )
+        public ComponentTypesController(ApplicationDbContext context, IMapper mapper, IHostingEnvironment appEnvironment)
         {
             _context = context;
             _mapper = mapper;
+            _appEnvironment = appEnvironment;
         }
 
         // GET: ComponentType
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ComponentType.ToListAsync());
+            var ctcs = await _context.ComponentType
+                                .Include(c => c.Image)
+                                .ToListAsync();
+
+            var vm = _mapper.Map<List<ComponentTypeViewModel>>(ctcs);
+
+            foreach(var wimmer in vm)
+            {
+                wimmer.FileAsBase64 = ImageUploadService.ToESImageBase64String(wimmer.Image);
+            }
+
+            return View(vm);
         }
 
         // GET: ComponentType/Details/5
@@ -41,7 +57,10 @@ namespace WebAssignment3.Controllers
             }
 
             var componentType = await _context.ComponentType
+                .Include(c => c.Image)
+                .Include(c => c.Components)
                 .FirstOrDefaultAsync(m => m.ComponentTypeId == id);
+
             if (componentType == null)
             {
                 return NotFound();
@@ -49,8 +68,8 @@ namespace WebAssignment3.Controllers
 
             ComponentTypeViewModel vm = _mapper.Map<ComponentTypeViewModel>(componentType);
             vm.Categories = _context.ComponentTypeCategory.Where(ctc => ctc.ComponentTypeId == componentType.ComponentTypeId).Select(cat => cat.Category).ToList();
-            vm.Components = _context.Component.Where(c => c.ComponentTypeId == componentType.ComponentTypeId).ToList();
-            
+            vm.FileAsBase64 = ImageUploadService.ToESImageBase64String(vm.Image);
+
             return View(vm);
         }
 
@@ -59,7 +78,7 @@ namespace WebAssignment3.Controllers
         {
             var categoriesAsSelectList = await _context.Category.Select(c => new SelectListItem
             {
-                Text = c.Name.ToString(),
+                Text = c.Name,
                 Value = c.CategoryId.ToString()
             }).ToListAsync();
 
@@ -82,23 +101,17 @@ namespace WebAssignment3.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("SelectedCategories, SelectedComponents, ComponentName,ComponentInfo,Location,Status,Datasheet,ImageUrl,Manufacturer,WikiLink,AdminComment")] ComponentTypeViewModel vm)
+        public async Task<IActionResult> Create(ComponentTypeViewModel vm)
         {
             if (ModelState.IsValid)
             {
-                ComponentType tempComponentType = new ComponentType()
-                {
-                    ComponentName = vm.ComponentName,
-                    AdminComment = vm.AdminComment,
-                    ComponentInfo = vm.ComponentInfo,
-                    Datasheet = vm.Datasheet,
-                    Location = vm.Location,
-                    WikiLink = vm.WikiLink,
-                    Status = vm.Status,
-                    Manufacturer = vm.Manufacturer,
-                    ImageUrl = vm.ImageUrl,
-                    Image = vm.Image,
-                };
+
+                ComponentType tempComponentType = _mapper.Map<ComponentType>(vm);
+
+                tempComponentType.Image = await ImageUploadService.FormFileToESIMage(vm.File);
+                tempComponentType.ImageUrl =  _appEnvironment.WebRootPath + "\\uploads\\images" + vm.File.FileName;
+
+                _context.ESImage.Add(tempComponentType.Image);
 
                 try
                 {

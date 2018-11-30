@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using WebAssignment3.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Http;
 
 namespace WebAssignment3.ViewModels
 {
@@ -38,6 +39,10 @@ namespace WebAssignment3.ViewModels
 
         public virtual ESImage Image { get; set; }
 
+        public IFormFile File { get; set; }
+
+        [Display(Name = "Picture")]
+        public string FileAsBase64 { get; set; }
 
         [Display(Name = "Categories")]
         public MultiSelectList MultiSelectCategories { get; set; }

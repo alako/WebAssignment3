@@ -56,7 +56,7 @@ namespace WebAssignment3
             });
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
+                options.UseInMemoryDatabase(
                     Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<ModelUser,ModelRole>(opt =>
@@ -113,7 +113,6 @@ namespace WebAssignment3
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-
             SeedRoles(roleManager).Wait();
         }
     }

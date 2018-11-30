@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using WebAssignment3.Data;
+using WebAssignment3.Infrastructure;
 using WebAssignment3.Models;
 using WebAssignment3.ViewModels;
 
@@ -38,11 +40,15 @@ namespace WebAssignment3.Controllers
         {
             if (vm.SelectedCategoryId != 0)
             {
-                var componentTypeCatsFromDb = _context.ComponentTypeCategory.Where(ctc => ctc.CategoryId == vm.SelectedCategoryId).ToList();
+                var componentTypeCatsFromDb = _context.ComponentTypeCategory
+                                                    .Where(ctc => ctc.CategoryId == vm.SelectedCategoryId)
+                                                    .ToList();
 
                 foreach (var ctc in componentTypeCatsFromDb)
                 {
-                    var tempComponentType = _mapper.Map<ComponentTypeViewModel>(_context.ComponentType.Find(ctc.ComponentTypeId));
+                    var componentType = await _context.ComponentType.Include(c => c.Image).FirstOrDefaultAsync(m => m.ComponentTypeId == ctc.ComponentTypeId); ;
+                    var tempComponentType = _mapper.Map<ComponentTypeViewModel>(componentType);
+                    tempComponentType.FileAsBase64 = ImageUploadService.ToESImageBase64String(tempComponentType.Image);
                     vm.ComponentTypes.Add(tempComponentType);
                 }
             }
